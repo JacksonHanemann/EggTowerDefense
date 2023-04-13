@@ -4,6 +4,9 @@ class Cannon:
     imageFile = "Cannon.PNG"
     ammoImageFile = "cannonBall.PNG"
     boomImageFile = "boom.PNG"
+    
+
+
 
 
     def __init__(self, imgWidth, imgHeight):
@@ -28,31 +31,39 @@ class Cannon:
         self.boomImage = pygame.image.load(self.boomImageFile)
         self.boomRect = self.boomImage.get_rect()
         self.ammoHit = False
+    
 
     #def Fire(self, allEggs):
     def Fire(self, egg):
+            ammoSpeed = 5
         #for egg in allEggs:
             if egg.isAlive:
                 print("Egg is alive")
-                if self.ammoRect.centerx > egg.eggRect.centerx:
+                '''if self.ammoRect.centerx > egg.eggRect.centerx:
                     #print("Ammox -1")
-                    self.ammoRect.centerx  -= 5
+                    self.ammoRect.centerx  -= ammoSpeed
                 else:
-                    self.ammoRect.centerx += 5
+                    self.ammoRect.centerx += ammoSpeed
                     #print("Ammox +1")
                 if self.ammoRect.centery > egg.eggRect.centery:
                     #print("Ammoy -1")
-                    self.ammoRect.centery -= 5
+                    self.ammoRect.centery -= ammoSpeed
                 else:
                     #print("Ammoy +1")
-                    self.ammoRect.centery += 5
+                    self.ammoRect.centery += ammoSpeed'''
+                self.ammoRect.y += ammoSpeed
 
                 if self.ammoRect.collidelist([egg.eggRect]) >-1:
                     print("Collided in Fire method")
-                    self.ammoRect.centerx = self.startX
+                    #self.ammoRect.centerx = self.startX
                     self.ammoRect.centery = self.startY
                     self.ammoHit = True
                     egg.setStatus(False)
+                if self.ammoRect.y >1080:
+                     self.ammoRect.centery = self.startY
+                
+
+                    
         
 
 

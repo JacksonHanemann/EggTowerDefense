@@ -3,6 +3,8 @@ import pygame
 from Enemy import Egg
 from Weapon import Cannon
 import time
+import sys
+import os
 
 #written by Jackson Hanemann
 
@@ -27,6 +29,17 @@ pygame.init()
 GameDisplay = pygame.display.set_mode((WIDTH,HEIGHT))
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
+# Set up the font object
+font = pygame.font.Font(None, 48)
+
+#money system
+cash = 100
+cashIncrement = 15
+
+#health system
+health = 100
+healthDecrease = -1
+
 
 #BACKGROUND
 Map = pygame.image.load("Background.PNG")
@@ -50,15 +63,20 @@ myCannon = Cannon(WIDTH, HEIGHT)
 spawn = True
 
 while len(allEggs) > 0:
-    # Total time elapsed since the timer started
-    totaltime = round((time.time() - starttime), 2)
-
-    if totaltime > 2:
-        spawn = True
-        starttime = time.time()
+            
     
     #clock.tick(FPS)
     for myEgg in allEggs:
+
+        # Draw the score to the screen
+        
+
+        # Total time elapsed since the timer started
+        totaltime = round((time.time() - starttime), 2)
+
+        if totaltime > 3:
+            spawn = True
+            starttime = time.time()
         print("Checking egg " + str(allEggs.index(myEgg)))
         if spawn == True:
             print("Spawning")
@@ -74,12 +92,13 @@ while len(allEggs) > 0:
         screen.fill(BLACK)
         screen.blit(Map, MapRect)
         screen.blit(myEgg.eggImage, myEgg.eggRect)
+        cash_text = font.render(f'Cash: ${cash}', True, (0, 0, 0))
+        screen.blit(cash_text, (1500, 150))
+        health_text = font.render(f'Health: {health}', True, (0, 0, 0))
+        screen.blit(health_text, (1500, 200))
 
-        screen.blit(myCannon.cannonImage, myCannon.cannonRect)
-        myEgg.setImage()
+
         
-        myCannon.Fire(myEgg)
-
         if myCannon.ammoHit == False:
             print("Blit ammo")
             screen.blit(myCannon.ammoImage, myCannon.ammoRect)
@@ -88,22 +107,36 @@ while len(allEggs) > 0:
             myCannon.boomRect.center = myEgg.eggRect.center
             screen.blit(myCannon.boomImage, myCannon.boomRect)
             myCannon.ammoHit = False
+            cash += cashIncrement
+
+        screen.blit(myCannon.cannonImage, myCannon.cannonRect)
+        myEgg.setImage()
+        
+        myCannon.Fire(myEgg)
+
 
         if myEgg.hasSpawned:
             if myEgg.isAlive:
                 print("I am alive")
-                #screen.blit(myEgg.eggImage, myEgg.eggRect)
+                screen.blit(myEgg.eggImage, myEgg.eggRect)
             else:
                 print("I am dead")
                 allEggs.remove(myEgg)
                 continue
         else:
             print("I have not spawned yet")
+            continue        
+
+
+        if myEgg.eggRect.x > 1928:
+            health += healthDecrease
+            allEggs.remove(myEgg)
             continue
-        
+            
+
         if myEgg.myDirection == "flat":
             #print("On the flat")
-            myEgg.moveX(5)
+            myEgg.moveX(50)
             if myEgg.eggRect.x > TurningP[myEgg.xonMap][0]:
                 myEgg.myDirection = TurningP[myEgg.xonMap][2]
                 myEgg.xonMap += 1
@@ -113,16 +146,16 @@ while len(allEggs) > 0:
                     myEgg.yonMap += 1
                     myEgg.myDirection = TurningP[myEgg.yonMap][2]
                 else:
-                    myEgg.moveY(5)
+                    myEgg.moveY(50)
             if myEgg.myDirection == "up":
                 if myEgg.eggRect.y < TurningP[myEgg.yonMap][1]:
                     myEgg.yonMap += 1
                     myEgg.myDirection = TurningP[myEgg.yonMap][2]
                 else:
-                    myEgg.moveY(-5)
-    
+                    myEgg.moveY(-50)
     
         pygame.display.update()
+        
     
 
     
