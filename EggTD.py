@@ -38,8 +38,9 @@ def main_menu():
     mixer.music.load('LobbyMusic.mp3')
     mixer.music.play()
 
+    click = False
+
     while True:
-        
  
         screen.fill((0,0,0))
         draw_text('main menu', menuFont, (255, 255, 255), screen, 20, 20)
@@ -75,7 +76,7 @@ def main_menu():
                     click = True
  
         pygame.display.update()
-        clock.tick(60)
+        clock.tick(5)
 
 def game():  
 
@@ -114,25 +115,41 @@ def game():
     # Egg array
     allEggs = [Egg1, Egg2, Egg3, Egg4, Egg5]
 
-    myCannon = Cannon(WIDTH, HEIGHT)
+
+    myCannon1 = Cannon(WIDTH/2, HEIGHT-900,'down')
+    myCannon2 = Cannon(WIDTH-800, HEIGHT-320, 'up')
+    
+    
+    allWeapons = [myCannon1, myCannon2]
 
     spawn = True
 
+
     while len(allEggs) > 0:
-                
-        
+        # Draw the background and score to the screen       
+        screen.fill(BLACK)
+        screen.blit(Map, MapRect)
+        cash_text = font.render(f'Cash: ${cash}', True, (0, 0, 0))
+        screen.blit(cash_text, (1500, 150))
+        health_text = font.render(f'Health: {health}', True, (0, 0, 0))
+        screen.blit(health_text, (1500, 200))
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    main_menu()
+
         #clock.tick(FPS)
         for myEgg in allEggs:
-
-            # Draw the score to the screen
             
 
             # Total time elapsed since the timer started
             totaltime = round((time.time() - starttime), 2)
+            print(totaltime)
 
-            if totaltime > 3:
+            if totaltime > 3 and not myEgg.isAlive:
                 spawn = True
                 starttime = time.time()
+
             print("Checking egg " + str(allEggs.index(myEgg)))
             if spawn == True:
                 print("Spawning")
@@ -144,43 +161,39 @@ def game():
             if myEgg.isAlive == False:
                 continue
         
-            
-            screen.fill(BLACK)
-            screen.blit(Map, MapRect)
             screen.blit(myEgg.eggImage, myEgg.eggRect)
-            cash_text = font.render(f'Cash: ${cash}', True, (0, 0, 0))
-            screen.blit(cash_text, (1500, 150))
-            health_text = font.render(f'Health: {health}', True, (0, 0, 0))
-            screen.blit(health_text, (1500, 200))
-
-
-            
-            if myCannon.ammoHit == False:
-                print("Blit ammo")
-                screen.blit(myCannon.ammoImage, myCannon.ammoRect)
-            else:
-                print("Blit boom")
-                myCannon.boomRect.center = myEgg.eggRect.center
-                screen.blit(myCannon.boomImage, myCannon.boomRect)
-                myCannon.ammoHit = False
-                cash += cashIncrement
-
-            screen.blit(myCannon.cannonImage, myCannon.cannonRect)
             myEgg.setImage()
             
-            myCannon.Fire(myEgg)
+
+
+            for weapon in allWeapons:
+
+                if weapon.ammoHit == False:
+                    #print("Blit ammo")
+                    screen.blit(weapon.ammoImage, weapon.ammoRect)
+                else:
+                    #print("Blit boom")
+                    weapon.boomRect.center = myEgg.eggRect.center
+                    screen.blit(weapon.boomImage, weapon.boomRect)
+                    weapon.ammoHit = False
+                    cash += cashIncrement
+
+                screen.blit(weapon.cannonImage, weapon.cannonRect)
+                
+                
+                weapon.Fire(myEgg)
 
 
             if myEgg.hasSpawned:
                 if myEgg.isAlive:
-                    print("I am alive")
+                    #print("I am alive")
                     screen.blit(myEgg.eggImage, myEgg.eggRect)
                 else:
-                    print("I am dead")
+                    #print("I am dead")
                     allEggs.remove(myEgg)
                     continue
             else:
-                print("I have not spawned yet")
+                #print("I have not spawned yet")
                 continue        
 
 
@@ -192,7 +205,7 @@ def game():
 
             if myEgg.myDirection == "flat":
                 #print("On the flat")
-                myEgg.moveX(50)
+                myEgg.moveX(5)
                 if myEgg.eggRect.x > TurningP[myEgg.xonMap][0]:
                     myEgg.myDirection = TurningP[myEgg.xonMap][2]
                     myEgg.xonMap += 1
@@ -202,15 +215,18 @@ def game():
                         myEgg.yonMap += 1
                         myEgg.myDirection = TurningP[myEgg.yonMap][2]
                     else:
-                        myEgg.moveY(50)
+                        myEgg.moveY(5)
                 if myEgg.myDirection == "up":
                     if myEgg.eggRect.y < TurningP[myEgg.yonMap][1]:
                         myEgg.yonMap += 1
                         myEgg.myDirection = TurningP[myEgg.yonMap][2]
                     else:
-                        myEgg.moveY(-50)
+                        myEgg.moveY(-5)
+
         
-            pygame.display.update()
+        pygame.display.update()
+
+
             
         
 

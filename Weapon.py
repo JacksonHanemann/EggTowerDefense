@@ -9,13 +9,21 @@ class Cannon:
 
 
 
-    def __init__(self, imgWidth, imgHeight):
+    def __init__(self, xLoc, yLoc, direction):
 
         self.cannonImage = pygame.image.load(self.imageFile)
         self.cannonRect = self.cannonImage.get_rect()
-        self.cannonRect.x = imgWidth/2
-        self.cannonRect.y = imgHeight-900
-        self.cannonImage = pygame.transform.rotate(self.cannonImage,270)
+        self.cannonRect.x = xLoc
+        self.cannonRect.y = yLoc
+        self.direction = direction
+        if self.direction == 'up':
+             rotation = 90
+        else:
+             rotation = 270
+        self.cannonImage = pygame.transform.rotate(self.cannonImage,rotation)
+
+        
+    
 
         self.ammoImage = pygame.image.load(self.ammoImageFile)
         self.ammoRect = self.ammoImage.get_rect()
@@ -38,7 +46,7 @@ class Cannon:
             ammoSpeed = 5
         #for egg in allEggs:
             if egg.isAlive:
-                print("Egg is alive")
+                #print("Egg is alive")
                 '''if self.ammoRect.centerx > egg.eggRect.centerx:
                     #print("Ammox -1")
                     self.ammoRect.centerx  -= ammoSpeed
@@ -51,7 +59,10 @@ class Cannon:
                 else:
                     #print("Ammoy +1")
                     self.ammoRect.centery += ammoSpeed'''
-                self.ammoRect.y += ammoSpeed
+                
+                if self.direction == 'up':
+                    self.ammoRect.y -= ammoSpeed
+                else: self.ammoRect.y += ammoSpeed
 
                 if self.ammoRect.collidelist([egg.eggRect]) >-1:
                     print("Collided in Fire method")
@@ -59,8 +70,15 @@ class Cannon:
                     self.ammoRect.centery = self.startY
                     self.ammoHit = True
                     egg.setStatus(False)
-                if self.ammoRect.y >1080:
+
+                    
+                if self.direction == 'down':
+                    if self.ammoRect.y >1080:
+                        self.ammoRect.centery = self.startY
+                elif self.ammoRect.y <0:
                      self.ammoRect.centery = self.startY
+                    
+                     
                 
 
                     
