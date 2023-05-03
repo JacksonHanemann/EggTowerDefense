@@ -138,9 +138,9 @@ def game():
                 if event.key == pygame.K_ESCAPE:
                     main_menu()
 
-        #clock.tick(FPS)
-        for myEgg in allEggs:
-            
+
+
+        for myEgg in allEggs:      
 
             # Total time elapsed since the timer started
             totaltime = round((time.time() - starttime), 2)
@@ -169,10 +169,9 @@ def game():
             for weapon in allWeapons:
 
                 if weapon.ammoHit == False:
-                    #print("Blit ammo")
                     screen.blit(weapon.ammoImage, weapon.ammoRect)
+
                 else:
-                    #print("Blit boom")
                     weapon.boomRect.center = myEgg.eggRect.center
                     screen.blit(weapon.boomImage, weapon.boomRect)
                     weapon.ammoHit = False
@@ -180,20 +179,20 @@ def game():
 
                 screen.blit(weapon.cannonImage, weapon.cannonRect)
                 
+
+                
                 
                 weapon.Fire(myEgg)
 
 
+
             if myEgg.hasSpawned:
                 if myEgg.isAlive:
-                    #print("I am alive")
                     screen.blit(myEgg.eggImage, myEgg.eggRect)
                 else:
-                    #print("I am dead")
                     allEggs.remove(myEgg)
                     continue
             else:
-                #print("I have not spawned yet")
                 continue        
 
 
@@ -204,7 +203,6 @@ def game():
                 
 
             if myEgg.myDirection == "flat":
-                #print("On the flat")
                 myEgg.moveX(5)
                 if myEgg.eggRect.x > TurningP[myEgg.xonMap][0]:
                     myEgg.myDirection = TurningP[myEgg.xonMap][2]
@@ -223,6 +221,11 @@ def game():
                     else:
                         myEgg.moveY(-5)
 
+        if weapon.direction == 'up':
+            weapon.ammoRect.y -= weapon.ammoSpeed
+    
+        else: weapon.ammoRect.y += weapon.ammoSpeed
+
         
         pygame.display.update()
 
@@ -233,7 +236,5 @@ def game():
         
 
         
-
-    #pygame.quit()
 main_menu()
 
