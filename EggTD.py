@@ -78,7 +78,9 @@ def main_menu():
         pygame.display.update()
         clock.tick(5)
 
-def game():  
+def game():
+
+      
 
     #BGcolour
     BLACK = (0,0,0)
@@ -126,6 +128,7 @@ def game():
 
 
     while len(allEggs) > 0:
+        mixer.music.pause
         # Draw the background and score to the screen       
         screen.fill(BLACK)
         screen.blit(Map, MapRect)
