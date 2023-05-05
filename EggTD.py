@@ -23,6 +23,7 @@ GameDisplay = pygame.display.set_mode((WIDTH,HEIGHT))
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
 menuFont = pygame.font.SysFont(None, 36)
+smallFont = pygame.font.SysFont(None, 30)
 
 clock = pygame.time.Clock()
 
@@ -46,6 +47,8 @@ def main_menu():
         draw_text('main menu', menuFont, (255, 255, 255), screen, 20, 20)
  
         mx, my = pygame.mouse.get_pos()
+
+        global event
  
         button_1 = pygame.Rect(860, 100, 200, 50)
         button_2 = pygame.Rect(860, 200, 200, 50)
@@ -84,6 +87,7 @@ def game():
 
     #BGcolour
     BLACK = (0,0,0)
+    WHITE = (255,255,255)
 
     # Timer starts
     starttime = time.time()
@@ -98,6 +102,9 @@ def game():
     #health system+
     health = 100
     healthDecrease = -1
+
+    #Buy button text
+    buyBut = smallFont.render('New Cannon', True, WHITE)
 
 
     #BACKGROUND
@@ -126,9 +133,11 @@ def game():
 
     spawn = True
 
+    mx, my = pygame.mouse.get_pos()
+
+    click = False
 
     while len(allEggs) > 0:
-        mixer.music.pause
         # Draw the background and score to the screen       
         screen.fill(BLACK)
         screen.blit(Map, MapRect)
@@ -136,30 +145,47 @@ def game():
         screen.blit(cash_text, (1500, 150))
         health_text = font.render(f'Health: {health}', True, (0, 0, 0))
         screen.blit(health_text, (1500, 200))
+
+        button3 = pygame.Rect(860,240,50,50)
+        
+        pygame.draw.rect(screen, (255, 0, 0), button3)
+
+        if button3.collidepoint(mx, my):
+            if click:
+                print("working")
+
+        pygame.draw.rect(screen, BLACK, [WIDTH/1.25, HEIGHT/3.5, 140, 40])
+        screen.blit(buyBut, (WIDTH/1.25+10, HEIGHT/3.5+10,))
+
+        click = False
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        click = True
+                        
+
+
+
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     main_menu()
 
-        #clock.tick(FPS)
+
         for myEgg in allEggs:
             
 
             # Total time elapsed since the timer started
             totaltime = round((time.time() - starttime), 2)
-            print(totaltime)
 
             if totaltime > 3 and not myEgg.isAlive:
                 spawn = True
                 starttime = time.time()
 
-            print("Checking egg " + str(allEggs.index(myEgg)))
             if spawn == True:
-                print("Spawning")
                 myEgg.isAlive = True
                 myEgg.hasSpawned = True
                 spawn = False
-                print("Alive=" + str(myEgg.isAlive) + ", Spawned=" + str(myEgg.hasSpawned))
 
             if myEgg.isAlive == False:
                 continue
@@ -172,10 +198,8 @@ def game():
             for weapon in allWeapons:
 
                 if weapon.ammoHit == False:
-                    #print("Blit ammo")
                     screen.blit(weapon.ammoImage, weapon.ammoRect)
                 else:
-                    #print("Blit boom")
                     weapon.boomRect.center = myEgg.eggRect.center
                     screen.blit(weapon.boomImage, weapon.boomRect)
                     weapon.ammoHit = False
@@ -189,14 +213,11 @@ def game():
 
             if myEgg.hasSpawned:
                 if myEgg.isAlive:
-                    #print("I am alive")
                     screen.blit(myEgg.eggImage, myEgg.eggRect)
                 else:
-                    #print("I am dead")
                     allEggs.remove(myEgg)
                     continue
             else:
-                #print("I have not spawned yet")
                 continue        
 
 
@@ -207,7 +228,6 @@ def game():
                 
 
             if myEgg.myDirection == "flat":
-                #print("On the flat")
                 myEgg.moveX(5)
                 if myEgg.eggRect.x > TurningP[myEgg.xonMap][0]:
                     myEgg.myDirection = TurningP[myEgg.xonMap][2]
@@ -225,6 +245,11 @@ def game():
                         myEgg.myDirection = TurningP[myEgg.yonMap][2]
                     else:
                         myEgg.moveY(-5)
+            
+        if weapon.direction == 'up':
+                weapon.ammoRect.y -= weapon.ammoSpeed
+        if weapon.direction == 'down': 
+            weapon.ammoRect.y += weapon.ammoSpeed
 
         
         pygame.display.update()
