@@ -133,7 +133,7 @@ def game():
 
     spawn = True
 
-    mx, my = pygame.mouse.get_pos()
+   
 
     click = False
 
@@ -146,6 +146,7 @@ def game():
         health_text = font.render(f'Health: {health}', True, (0, 0, 0))
         screen.blit(health_text, (1500, 200))
 
+        mx, my = pygame.mouse.get_pos()
         button3 = pygame.Rect(860,240,50,50)
         
         pygame.draw.rect(screen, (255, 0, 0), button3)
