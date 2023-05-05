@@ -7,8 +7,6 @@ class Cannon:
     
 
 
-
-
     def __init__(self, xLoc, yLoc, direction):
 
         self.cannonImage = pygame.image.load(self.imageFile)
@@ -38,10 +36,27 @@ class Cannon:
         self.ammoHit = False
     
 
-    #def Fire(self, allEggs):
     def Fire(self, egg):
-
+            ammoSpeed = 5
+        #for egg in allEggs:
             if egg.isAlive:
+                #print("Egg is alive")
+                '''if self.ammoRect.centerx > egg.eggRect.centerx:
+                    #print("Ammox -1")
+                    self.ammoRect.centerx  -= ammoSpeed
+                else:
+                    self.ammoRect.centerx += ammoSpeed
+                    #print("Ammox +1")
+                if self.ammoRect.centery > egg.eggRect.centery:
+                    #print("Ammoy -1")
+                    self.ammoRect.centery -= ammoSpeed
+                else:
+                    #print("Ammoy +1")
+                    self.ammoRect.centery += ammoSpeed'''
+                
+                if self.direction == 'up':
+                    self.ammoRect.y -= ammoSpeed
+                else: self.ammoRect.y += ammoSpeed
 
                 if self.ammoRect.collidelist([egg.eggRect]) >-1:
                     self.ammoRect.centery = self.startY
@@ -50,9 +65,9 @@ class Cannon:
 
                     
                 if self.direction == 'down':
-                    if self.ammoRect.y >1080:
+                    if self.ammoRect.y >700:
                         self.ammoRect.centery = self.startY
-                elif self.ammoRect.y <0:
+                elif self.ammoRect.y <250:
                      self.ammoRect.centery = self.startY
                     
                      

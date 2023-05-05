@@ -172,7 +172,7 @@ def game():
                 if event.key == pygame.K_ESCAPE:
                     main_menu()
 
-
+        #clock.tick(FPS)
         for myEgg in allEggs:
             
 
@@ -200,6 +200,7 @@ def game():
 
                 if weapon.ammoHit == False:
                     screen.blit(weapon.ammoImage, weapon.ammoRect)
+
                 else:
                     weapon.boomRect.center = myEgg.eggRect.center
                     screen.blit(weapon.boomImage, weapon.boomRect)
@@ -208,8 +209,11 @@ def game():
 
                 screen.blit(weapon.cannonImage, weapon.cannonRect)
                 
+
+                
                 
                 weapon.Fire(myEgg)
+
 
 
             if myEgg.hasSpawned:
@@ -246,11 +250,6 @@ def game():
                         myEgg.myDirection = TurningP[myEgg.yonMap][2]
                     else:
                         myEgg.moveY(-5)
-            
-        if weapon.direction == 'up':
-                weapon.ammoRect.y -= weapon.ammoSpeed
-        if weapon.direction == 'down': 
-            weapon.ammoRect.y += weapon.ammoSpeed
 
         
         pygame.display.update()
@@ -262,7 +261,5 @@ def game():
         
 
         
-
-    #pygame.quit()
 main_menu()
 
