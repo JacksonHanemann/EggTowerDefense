@@ -58,7 +58,8 @@ def main_menu():
                 game()
         if button_2.collidepoint((mx, my)):
             if click:
-                 options()
+                 #options()
+                 print("In options")
         pygame.draw.rect(screen, (255, 0, 0), button_1)
         pygame.draw.rect(screen, (255, 0, 0), button_2)
 
@@ -82,9 +83,6 @@ def main_menu():
         clock.tick(5)
 
 def game():
-
-      
-
     #BGcolour
     BLACK = (0,0,0)
     WHITE = (255,255,255)
@@ -124,16 +122,12 @@ def game():
     # Egg array
     allEggs = [Egg1, Egg2, Egg3, Egg4, Egg5]
 
-
     myCannon1 = Cannon(WIDTH/2, HEIGHT-900, 'down', 5)
     myCannon2 = Cannon(WIDTH-400, HEIGHT-320, 'up', 5)
-    
     
     allWeapons = [myCannon1, myCannon2]
 
     spawn = True
-
-   
 
     click = False
 
@@ -163,9 +157,6 @@ def game():
             if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
                         click = True
-                        
-
-
 
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
@@ -181,53 +172,14 @@ def game():
             # Check if we need to spawn an egg
             if (totaltime > 3 and not myEgg.isAlive) or spawn:
                 spawn = False
-                myEgg.isAlive = True
-                starttime = time.time()
-
-            if spawn == True:
-                myEgg.isAlive = True
-                myEgg.hasSpawned = True
-                spawn = False
 
             if myEgg.isAlive == False:
-                #print("continuing")
                 continue
 
             # If egg is alive, move it along the path
             myEgg.move(5, TurningP)
             myEgg.setImage()
-            
-
-
-            for weapon in allWeapons:
-
-                if weapon.ammoHit == False:
-                    screen.blit(weapon.ammoImage, weapon.ammoRect)
-
-                else:
-                    weapon.boomRect.center = myEgg.eggRect.center
-                    screen.blit(weapon.boomImage, weapon.boomRect)
-                    weapon.ammoHit = False
-                    cash += cashIncrement
-
-                screen.blit(weapon.cannonImage, weapon.cannonRect)
-                
-
-                
-                
-                weapon.Fire(myEgg)
-
-
-
-            if myEgg.hasSpawned:
-                if myEgg.isAlive:
-                    screen.blit(myEgg.eggImage, myEgg.eggRect)
-                else:
-                    allEggs.remove(myEgg)
-                    continue
-            else:
-                continue        
-
+            screen.blit(myEgg.eggImage, myEgg.eggRect)
 
             # If egg is safely home, remove it from the list of active eggs and substract from player health
             if myEgg.eggRect.x > 1928:
@@ -240,18 +192,15 @@ def game():
             # Move ammo
             weapon.moveAmmo()
 
-            # Check if ammo hit an egg and if it did, capture which egg was hit
+            # Check if ammo hit an egg
             eggHit = weapon.checkHit(allEggs)
 
-            #if weapon.ammoHit == False:
             if eggHit == -1:
-                #print("Blit ammo")
                 screen.blit(weapon.ammoImage, weapon.ammoRect)
             else:
-                print("Blit boom")
+                #print("Blit boom")
                 weapon.boomRect.center = allEggs[eggHit].eggRect.center
                 screen.blit(weapon.boomImage, weapon.boomRect)
-                #weapon.ammoHit = False
                 cash += cashIncrement
 
                 # Remove hit egg
