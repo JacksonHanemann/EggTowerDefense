@@ -30,6 +30,28 @@ class Egg:
 
     def setStatus(self, status):
         self.isAlive = status
+
+    def move(self, speed, TurningP):
+        if self.myDirection == "flat":
+            #print("On the flat")
+            self.moveX(5)
+            if self.eggRect.x > TurningP[self.xonMap][0]:
+                self.myDirection = TurningP[self.xonMap][2]
+                self.xonMap += 1
+        else:
+            if self.myDirection == "down":
+                if self.eggRect.y > TurningP[self.yonMap][1]:
+                    self.yonMap += 1
+                    self.myDirection = TurningP[self.yonMap][2]
+                else:
+                    self.moveY(5)
+            if self.myDirection == "up":
+                if self.eggRect.y < TurningP[self.yonMap][1]:
+                    self.yonMap += 1
+                    self.myDirection = TurningP[self.yonMap][2]
+                else:
+                    self.moveY(-5)
+
     
     def moveX(self, speed):
         self.eggRect.x += speed

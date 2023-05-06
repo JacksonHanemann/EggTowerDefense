@@ -116,8 +116,8 @@ def game():
     allEggs = [Egg1, Egg2, Egg3, Egg4, Egg5]
 
 
-    myCannon1 = Cannon(WIDTH/2, HEIGHT-900,'down')
-    myCannon2 = Cannon(WIDTH-800, HEIGHT-320, 'up')
+    myCannon1 = Cannon(WIDTH/2, HEIGHT-900, 'down', 5)
+    myCannon2 = Cannon(WIDTH-400, HEIGHT-320, 'up', 5)
     
     
     allWeapons = [myCannon1, myCannon2]
@@ -133,97 +133,65 @@ def game():
         screen.blit(cash_text, (1500, 150))
         health_text = font.render(f'Health: {health}', True, (0, 0, 0))
         screen.blit(health_text, (1500, 200))
+
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     main_menu()
 
-        #clock.tick(FPS)
         for myEgg in allEggs:
-            
+            #print("Checking egg " + str(allEggs.index(myEgg)))
 
             # Total time elapsed since the timer started
             totaltime = round((time.time() - starttime), 2)
-            print(totaltime)
+            #print(totaltime)
 
-            if totaltime > 3 and not myEgg.isAlive:
-                spawn = True
+            # Check if we need to spawn an egg
+            if (totaltime > 3 and not myEgg.isAlive) or spawn:
+                spawn = False
+                myEgg.isAlive = True
                 starttime = time.time()
 
-            print("Checking egg " + str(allEggs.index(myEgg)))
-            if spawn == True:
-                print("Spawning")
-                myEgg.isAlive = True
-                myEgg.hasSpawned = True
-                spawn = False
-                print("Alive=" + str(myEgg.isAlive) + ", Spawned=" + str(myEgg.hasSpawned))
-
             if myEgg.isAlive == False:
+                #print("continuing")
                 continue
-        
-            screen.blit(myEgg.eggImage, myEgg.eggRect)
+
+            # If egg is alive, move it along the path
+            myEgg.move(5, TurningP)
             myEgg.setImage()
-            
+            screen.blit(myEgg.eggImage, myEgg.eggRect)
 
-
-            for weapon in allWeapons:
-
-                if weapon.ammoHit == False:
-                    #print("Blit ammo")
-                    screen.blit(weapon.ammoImage, weapon.ammoRect)
-                else:
-                    #print("Blit boom")
-                    weapon.boomRect.center = myEgg.eggRect.center
-                    screen.blit(weapon.boomImage, weapon.boomRect)
-                    weapon.ammoHit = False
-                    cash += cashIncrement
-
-                screen.blit(weapon.cannonImage, weapon.cannonRect)
-                
-                
-                weapon.Fire(myEgg)
-
-
-            if myEgg.hasSpawned:
-                if myEgg.isAlive:
-                    #print("I am alive")
-                    screen.blit(myEgg.eggImage, myEgg.eggRect)
-                else:
-                    #print("I am dead")
-                    allEggs.remove(myEgg)
-                    continue
-            else:
-                #print("I have not spawned yet")
-                continue        
-
-
+            # If egg is safely home, remove it from the list of active eggs and substract from player health
             if myEgg.eggRect.x > 1928:
                 health += healthDecrease
                 allEggs.remove(myEgg)
                 continue
-                
 
-            if myEgg.myDirection == "flat":
-                #print("On the flat")
-                myEgg.moveX(5)
-                if myEgg.eggRect.x > TurningP[myEgg.xonMap][0]:
-                    myEgg.myDirection = TurningP[myEgg.xonMap][2]
-                    myEgg.xonMap += 1
+        # Check all weeapons
+        for weapon in allWeapons:
+            # Move ammo
+            weapon.moveAmmo()
+
+            # Check if ammo hit an egg and if it did, capture which egg was hit
+            eggHit = weapon.checkHit(allEggs)
+
+            #if weapon.ammoHit == False:
+            if eggHit == -1:
+                #print("Blit ammo")
+                screen.blit(weapon.ammoImage, weapon.ammoRect)
             else:
-                if myEgg.myDirection == "down":
-                    if myEgg.eggRect.y > TurningP[myEgg.yonMap][1]:
-                        myEgg.yonMap += 1
-                        myEgg.myDirection = TurningP[myEgg.yonMap][2]
-                    else:
-                        myEgg.moveY(5)
-                if myEgg.myDirection == "up":
-                    if myEgg.eggRect.y < TurningP[myEgg.yonMap][1]:
-                        myEgg.yonMap += 1
-                        myEgg.myDirection = TurningP[myEgg.yonMap][2]
-                    else:
-                        myEgg.moveY(-5)
+                print("Blit boom")
+                weapon.boomRect.center = allEggs[eggHit].eggRect.center
+                screen.blit(weapon.boomImage, weapon.boomRect)
+                #weapon.ammoHit = False
+                cash += cashIncrement
 
-        
+                # Remove hit egg
+                allEggs.pop(eggHit)
+
+            screen.blit(weapon.cannonImage, weapon.cannonRect)
+
+        clock.tick(FPS)
         pygame.display.update()
 
 

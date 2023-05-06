@@ -9,83 +9,56 @@ class Cannon:
 
 
 
-    def __init__(self, xLoc, yLoc, direction):
-
+    def __init__(self, xLoc, yLoc, direction, speed):
+        # Set up the weapon
         self.cannonImage = pygame.image.load(self.imageFile)
         self.cannonRect = self.cannonImage.get_rect()
         self.cannonRect.x = xLoc
         self.cannonRect.y = yLoc
         self.direction = direction
+
         if self.direction == 'up':
              rotation = 90
         else:
              rotation = 270
         self.cannonImage = pygame.transform.rotate(self.cannonImage,rotation)
 
-        
-    
-
+        # Set up the ammo
         self.ammoImage = pygame.image.load(self.ammoImageFile)
         self.ammoRect = self.ammoImage.get_rect()
-        #self.ammoRect.x = self.cannonRect.x +self.cannonRect.height/2 - self.ammoRect.width/2
-        #self.ammoRect.y = self.cannonRect.bottom
-        #self.ammoRect.x = imgWidth/2
-        #self.ammoRect.y = imgHeight-900
-        self.ammoRect.centerx = self.cannonRect.x +self.cannonRect.height/2 - self.ammoRect.width/2
-        self.ammoRect.centery = self.cannonRect.bottom
+        self.ammoRect.x = self.cannonRect.x +self.cannonRect.height/2 - self.ammoRect.width/2
+        self.ammoRect.y = self.cannonRect.bottom
         self.startX = self.ammoRect.x
         self.startY = self.ammoRect.y
+        self.ammoSpeed = speed
 
+
+        # Set up collision 
         self.boomImage = pygame.image.load(self.boomImageFile)
         self.boomRect = self.boomImage.get_rect()
-        self.ammoHit = False
+        #self.ammoHit = False
     
 
-    #def Fire(self, allEggs):
-    def Fire(self, egg):
-            ammoSpeed = 5
-        #for egg in allEggs:
-            if egg.isAlive:
-                #print("Egg is alive")
-                '''if self.ammoRect.centerx > egg.eggRect.centerx:
-                    #print("Ammox -1")
-                    self.ammoRect.centerx  -= ammoSpeed
-                else:
-                    self.ammoRect.centerx += ammoSpeed
-                    #print("Ammox +1")
-                if self.ammoRect.centery > egg.eggRect.centery:
-                    #print("Ammoy -1")
-                    self.ammoRect.centery -= ammoSpeed
-                else:
-                    #print("Ammoy +1")
-                    self.ammoRect.centery += ammoSpeed'''
-                
-                if self.direction == 'up':
-                    self.ammoRect.y -= ammoSpeed
-                else: self.ammoRect.y += ammoSpeed
+    def moveAmmo(self):
+        if self.direction == 'up':
+            self.ammoRect.y -= self.ammoSpeed
+        else: self.ammoRect.y += self.ammoSpeed
+            
+        if self.direction == 'down':
+            if self.ammoRect.y > 1080:
+                self.ammoRect.y = self.startY
+        elif self.ammoRect.y < 0:
+                self.ammoRect.y = self.startY
 
-                if self.ammoRect.collidelist([egg.eggRect]) >-1:
-                    print("Collided in Fire method")
-                    #self.ammoRect.centerx = self.startX
-                    self.ammoRect.centery = self.startY
-                    self.ammoHit = True
-                    egg.setStatus(False)
+    def checkHit(self, eggList):
+        eggRects = []
+        for egg in eggList:
+             eggRects.append(egg.eggRect)
+        collidedWithEgg = self.ammoRect.collidelist(eggRects)
 
-                    
-                if self.direction == 'down':
-                    if self.ammoRect.y >1080:
-                        self.ammoRect.centery = self.startY
-                elif self.ammoRect.y <0:
-                     self.ammoRect.centery = self.startY
-                    
-                     
-                
-
-                    
-        
-
-
-
-     
-
-    
+        if collidedWithEgg > -1:
+            print("Collided in Fire method")
+            # Start a new round of ammo
+            self.ammoRect.y = self.startY
+            #self.ammoHit = True
+        return collidedWithEgg
