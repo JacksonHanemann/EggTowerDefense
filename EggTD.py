@@ -42,13 +42,12 @@ def main_menu():
     click = False
 
     while True:
- 
+        global event
+
         screen.fill((0,0,0))
         draw_text('main menu', menuFont, (255, 255, 255), screen, 20, 20)
  
         mx, my = pygame.mouse.get_pos()
-
-        global event
  
         button_1 = pygame.Rect(860, 100, 200, 50)
         button_2 = pygame.Rect(860, 200, 200, 50)
@@ -56,10 +55,12 @@ def main_menu():
         if button_1.collidepoint((mx, my)):
             if click:
                 game()
+
         if button_2.collidepoint((mx, my)):
             if click:
                  #options()
                  print("In options")
+
         pygame.draw.rect(screen, (255, 0, 0), button_1)
         pygame.draw.rect(screen, (255, 0, 0), button_2)
 
@@ -96,6 +97,7 @@ def game():
     #money system
     cash = 100
     cashIncrement = 15
+    weaponCost = 50
 
     #health system+
     health = 100
@@ -127,7 +129,9 @@ def game():
     
     allWeapons = [myCannon1, myCannon2]
 
-    spawn = True
+    spawnFirstEgg = True
+    activateFirstWeapon = True
+    newWeapon = False
 
     click = False
 
@@ -142,21 +146,21 @@ def game():
 
         mx, my = pygame.mouse.get_pos()
         button3 = pygame.Rect(860,240,50,50)
-        
-        pygame.draw.rect(screen, (255, 0, 0), button3)
 
         if button3.collidepoint(mx, my):
             if click:
                 print("working")
-
+                newWeapon = True
+                click = False
+        
+        pygame.draw.rect(screen, (255, 0, 0), button3)
         pygame.draw.rect(screen, BLACK, [WIDTH/1.25, HEIGHT/3.5, 140, 40])
         screen.blit(buyBut, (WIDTH/1.25+10, HEIGHT/3.5+10,))
 
-        click = False
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 1:
-                        click = True
+                if event.button == 1:
+                    click = True
 
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
@@ -170,10 +174,13 @@ def game():
             totaltime = round((time.time() - starttime), 2)
 
             # Check if we need to spawn an egg
-            if (totaltime > 3 and not myEgg.isAlive) or spawn:
-                spawn = False
+            if (totaltime > 3 and not myEgg.isAlive) or spawnFirstEgg:
+                print("Egg is alive: " + str(allEggs.index(myEgg)))
+                myEgg.isAlive = True
+                spawnFirstEgg = False
+                starttime = time.time()
 
-            if myEgg.isAlive == False:
+            if not myEgg.isAlive:
                 continue
 
             # If egg is alive, move it along the path
@@ -189,6 +196,19 @@ def game():
 
         # Check all weeapons
         for weapon in allWeapons:
+            if (activateFirstWeapon or newWeapon) and not weapon.isActive:
+                print("Activating weapon")
+                weapon.isActive = True
+                activateFirstWeapon = False
+
+                # If this weapon was bought, subtract from cash
+                if newWeapon:
+                    cash -= weaponCost
+                    newWeapon = False
+
+            if not weapon.isActive:
+                continue
+
             # Move ammo
             weapon.moveAmmo()
 
@@ -212,11 +232,5 @@ def game():
         pygame.display.update()
 
 
-            
-        
-
-        
-
-        
+# Display the main menu        
 main_menu()
-

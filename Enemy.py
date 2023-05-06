@@ -28,8 +28,8 @@ class Egg:
 
         self.eggImage = self.eggImages[self.imgNumber]
 
-    def setStatus(self, status):
-        self.isAlive = status
+    #def setStatus(self, status):
+    #    self.isAlive = status
 
     def move(self, speed, TurningP):
         if self.myDirection == "flat":

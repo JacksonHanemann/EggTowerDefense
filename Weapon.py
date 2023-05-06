@@ -12,6 +12,7 @@ class Cannon:
         self.cannonRect.x = xLoc
         self.cannonRect.y = yLoc
         self.direction = direction
+        self.isActive = False
 
         if self.direction == 'up':
              rotation = 90
