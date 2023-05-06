@@ -23,6 +23,7 @@ GameDisplay = pygame.display.set_mode((WIDTH,HEIGHT))
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
 menuFont = pygame.font.SysFont(None, 36)
+smallFont = pygame.font.SysFont(None, 30)
 
 clock = pygame.time.Clock()
 
@@ -46,6 +47,8 @@ def main_menu():
         draw_text('main menu', menuFont, (255, 255, 255), screen, 20, 20)
  
         mx, my = pygame.mouse.get_pos()
+
+        global event
  
         button_1 = pygame.Rect(860, 100, 200, 50)
         button_2 = pygame.Rect(860, 200, 200, 50)
@@ -78,10 +81,13 @@ def main_menu():
         pygame.display.update()
         clock.tick(5)
 
-def game():  
+def game():
+
+      
 
     #BGcolour
     BLACK = (0,0,0)
+    WHITE = (255,255,255)
 
     # Timer starts
     starttime = time.time()
@@ -96,6 +102,9 @@ def game():
     #health system+
     health = 100
     healthDecrease = -1
+
+    #Buy button text
+    buyBut = smallFont.render('New Cannon', True, WHITE)
 
 
     #BACKGROUND
@@ -124,6 +133,9 @@ def game():
 
     spawn = True
 
+   
+
+    click = False
 
     while len(allEggs) > 0:
         # Draw the background and score to the screen       
@@ -133,6 +145,27 @@ def game():
         screen.blit(cash_text, (1500, 150))
         health_text = font.render(f'Health: {health}', True, (0, 0, 0))
         screen.blit(health_text, (1500, 200))
+
+        mx, my = pygame.mouse.get_pos()
+        button3 = pygame.Rect(860,240,50,50)
+        
+        pygame.draw.rect(screen, (255, 0, 0), button3)
+
+        if button3.collidepoint(mx, my):
+            if click:
+                print("working")
+
+        pygame.draw.rect(screen, BLACK, [WIDTH/1.25, HEIGHT/3.5, 140, 40])
+        screen.blit(buyBut, (WIDTH/1.25+10, HEIGHT/3.5+10,))
+
+        click = False
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        click = True
+                        
+
+
 
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
@@ -144,13 +177,17 @@ def game():
 
             # Total time elapsed since the timer started
             totaltime = round((time.time() - starttime), 2)
-            #print(totaltime)
 
             # Check if we need to spawn an egg
             if (totaltime > 3 and not myEgg.isAlive) or spawn:
                 spawn = False
                 myEgg.isAlive = True
                 starttime = time.time()
+
+            if spawn == True:
+                myEgg.isAlive = True
+                myEgg.hasSpawned = True
+                spawn = False
 
             if myEgg.isAlive == False:
                 #print("continuing")
@@ -159,7 +196,38 @@ def game():
             # If egg is alive, move it along the path
             myEgg.move(5, TurningP)
             myEgg.setImage()
-            screen.blit(myEgg.eggImage, myEgg.eggRect)
+            
+
+
+            for weapon in allWeapons:
+
+                if weapon.ammoHit == False:
+                    screen.blit(weapon.ammoImage, weapon.ammoRect)
+
+                else:
+                    weapon.boomRect.center = myEgg.eggRect.center
+                    screen.blit(weapon.boomImage, weapon.boomRect)
+                    weapon.ammoHit = False
+                    cash += cashIncrement
+
+                screen.blit(weapon.cannonImage, weapon.cannonRect)
+                
+
+                
+                
+                weapon.Fire(myEgg)
+
+
+
+            if myEgg.hasSpawned:
+                if myEgg.isAlive:
+                    screen.blit(myEgg.eggImage, myEgg.eggRect)
+                else:
+                    allEggs.remove(myEgg)
+                    continue
+            else:
+                continue        
+
 
             # If egg is safely home, remove it from the list of active eggs and substract from player health
             if myEgg.eggRect.x > 1928:
@@ -201,7 +269,5 @@ def game():
         
 
         
-
-    #pygame.quit()
 main_menu()
 

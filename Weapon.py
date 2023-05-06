@@ -19,8 +19,8 @@ class Cannon:
 
         if self.direction == 'up':
              rotation = 90
-        else:
-             rotation = 270
+        if self.direction == 'down':
+            rotation = 270
         self.cannonImage = pygame.transform.rotate(self.cannonImage,rotation)
 
         # Set up the ammo
