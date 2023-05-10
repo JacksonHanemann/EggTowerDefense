@@ -6,7 +6,7 @@ class Egg:
     eggImgRight = pygame.image.load("EGG2.PNG")
     eggImages = [eggImgLeft, eggImgRight]
 
-    def __init__(self, imgWidth, imgHeight):
+    def __init__(self, imgWidth, imgHeight, speed):
         self.eggImage = self.eggImages[0]
         self.eggRect = self.eggImage.get_rect()
         self.eggRect.x = imgWidth/2-1000
@@ -18,6 +18,7 @@ class Egg:
         self.imgNumber = 0
         self.xonMap = 0
         self.yonMap = 0
+        self.eggSpeed = speed
 
     def setImage(self):   
         self.imgNumber = self.myCounter//20
