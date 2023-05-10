@@ -114,15 +114,33 @@ def game():
 
     TurningP = [(260,170,'up'),(650,170,'flat'),(650,600,'down'),(1150,600,'flat'),(1150,400,'up'),(1928,400,"flat")]
 
+    # Set up rounds 
+    roundOne = {'eggCount': 5, 'eggSpeed': 5}
+    #roundTwo = {'eggCount': 7, 'eggSpeed': 6}
+    #roundThree = {'eggCount': 10, 'eggSpeed': 7}
+    #allRounds = [roundOne, roundTwo, roundThree]
+    allRounds = [roundOne]
+
+    allEggs = []
+
+    for nextRound in allRounds:
+        numEggs = nextRound['eggCount']
+        speed = nextRound['eggSpeed']
+
+        for eachEgg in range(numEggs):
+            #print("Creating egg")
+            newEgg = Egg(WIDTH, HEIGHT, speed)
+            allEggs.append(newEgg)
+
     # Create all eggs
-    Egg1 = Egg(WIDTH, HEIGHT)
+    '''Egg1 = Egg(WIDTH, HEIGHT)
     Egg2 = Egg(WIDTH, HEIGHT)
     Egg3 = Egg(WIDTH, HEIGHT)
     Egg4 = Egg(WIDTH, HEIGHT)
-    Egg5 = Egg(WIDTH, HEIGHT)
+    Egg5 = Egg(WIDTH, HEIGHT)'''
 
     # Egg array
-    allEggs = [Egg1, Egg2, Egg3, Egg4, Egg5]
+    # allEggs = [Egg1, Egg2, Egg3, Egg4, Egg5]
 
     myCannon1 = Cannon(WIDTH/2, HEIGHT-900, 'down', 5)
     myCannon2 = Cannon(WIDTH-400, HEIGHT-320, 'up', 5)
@@ -136,6 +154,8 @@ def game():
     click = False
 
     while len(allEggs) > 0:
+        #print(len(allEggs))
+
         # Draw the background and score to the screen       
         screen.fill(BLACK)
         screen.blit(Map, MapRect)
@@ -149,7 +169,7 @@ def game():
 
         if button3.collidepoint(mx, my):
             if click:
-                print("working")
+                #print("working")
                 newWeapon = True
                 click = False
         
@@ -168,14 +188,14 @@ def game():
                     main_menu()
 
         for myEgg in allEggs:
-            #print("Checking egg " + str(allEggs.index(myEgg)))
-
+            #print("Egg is alive: " + str(allEggs.index(myEgg)))
+            #print(type(myEgg))
             # Total time elapsed since the timer started
             totaltime = round((time.time() - starttime), 2)
 
             # Check if we need to spawn an egg
             if (totaltime > 3 and not myEgg.isAlive) or spawnFirstEgg:
-                print("Egg is alive: " + str(allEggs.index(myEgg)))
+                #print("Egg is alive: " + str(allEggs.index(myEgg)))
                 myEgg.isAlive = True
                 spawnFirstEgg = False
                 starttime = time.time()
@@ -197,7 +217,7 @@ def game():
         # Check all weeapons
         for weapon in allWeapons:
             if (activateFirstWeapon or newWeapon) and not weapon.isActive:
-                print("Activating weapon")
+                #print("Activating weapon")
                 weapon.isActive = True
                 activateFirstWeapon = False
 
