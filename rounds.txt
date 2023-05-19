@@ -1,0 +1,7 @@
+# Each round contains the number of eggs, speed of eggs and strength of eggs
+5,5
+7,6
+10,7
+12,8
+12,9
+15,10

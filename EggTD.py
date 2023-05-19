@@ -27,6 +27,8 @@ smallFont = pygame.font.SysFont(None, 30)
 
 clock = pygame.time.Clock()
 
+roundsFile = 'rounds.txt'
+
 def draw_text(text, font, color, surface, x, y):
     textobj = font.render(text, 1, color)
     textrect = textobj.get_rect()
@@ -119,21 +121,15 @@ def game():
     TurningP = [(260,170,'up'),(650,170,'flat'),(650,600,'down'),(1150,600,'flat'),(1150,400,'up'),(1928,400,"flat")]
 
     # Set up rounds 
-    roundOne = {'eggCount': 5, 'eggSpeed': 5}
-    roundTwo = {'eggCount': 7, 'eggSpeed': 6}
-    roundThree = {'eggCount': 10, 'eggSpeed': 7}
-    allRounds = [roundOne, roundTwo, roundThree]
-    
+    allRounds = []
+
+    with open(roundsFile) as file:
+        while line := file.readline():
+            if not line.startswith('#'):
+                roundValues = line.strip().split(',')
+                allRounds.append(list(roundValues))
+
     allEggs = []
-
-    # Create all eggs
-    #for nextRound in allRounds:
-    #    numEggs = nextRound['eggCount']
-    #    speed = nextRound['eggSpeed']
-
-    #   for eachEgg in range(numEggs):
-    #        newEgg = Egg(WIDTH, HEIGHT, speed)
-    #       allEggs.append(newEgg)
 
     myCannon1 = Cannon(WIDTH/2, HEIGHT-900, 'down', 5)
     myCannon2 = Cannon(WIDTH-400, HEIGHT-320, 'up', 5)
@@ -151,19 +147,15 @@ def game():
 
 
     for nextRound in allRounds:
-        print("This is round %s" % allRounds.index(nextRound))
         
         #Create eggs for next round
-        numEggs = nextRound['eggCount']
-        speed = nextRound['eggSpeed']
+        numEggs = int(nextRound[0])
+        speed = int(nextRound[1])
 
         for eachEgg in range(numEggs):
             newEgg = Egg(WIDTH, HEIGHT, speed)
             allEggs.append(newEgg)
-
-    #while health > 0:
-        
-        
+  
         while len(allEggs) > 0 and health > 0:
             mixer.init()
             mixer.music.load('LobbyMusic.mp3')
@@ -210,6 +202,7 @@ def game():
             screen.blit(upgBut, (WIDTH/1.25+10, HEIGHT/2.5-40,))
 
             for myEgg in allEggs:
+                print(myEgg)
                 # Total time elapsed since the timer started
                 totaltime = round((time.time() - starttime), 2)
 
@@ -253,43 +246,11 @@ def game():
                         #cash -= weaponCost
                         newWeapon = False
 
-                    
-                #if (hasUpgraded) and not weapon.isActive:
                 if hasUpgraded and weapon.isActive:
                     weapon.ammoSpeed += 1
 
-                    #if hasUpgraded:
-                    #    cash -= upgradeCost             
-                    #    hasUpgraded = False
-
                 if not weapon.isActive:
                     continue
-
-                '''for event in pygame.event.get():
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_ESCAPE:
-                            main_menu()
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        if event.button == 1:
-                            clickBuy = True
-                            clickUpg = True
-
-                if button4.collidepoint(mx, my):
-                    if clickUpg:
-                        weapon.ammoSpeed += 1
-                        hasUpgraded = True
-                        clickUpg = False
-                        if cash < 0:
-                            cantUpg = True
-                if cantUpg == True:
-                    hasUpgraded = False
-
-                if button3.collidepoint(mx, my):
-                    if clickBuy:
-                        newWeapon = True        
-                        clickBuy = False       
-
-                click = False'''
 
                 # Move ammo
                 weapon.moveAmmo()
